@@ -8,8 +8,12 @@
   display: grid;
   width: 100vw;
   height: 100vh;
-  grid-template-rows: 1fr 2.5fr;
+  grid-template-rows: 1fr max-content 1fr;
   justify-content: center;
+}
+
+.content > h1 {
+  padding-top: 40px;
 }
 
 .header {
@@ -40,11 +44,14 @@ form div {
   grid-template-columns: max-content 1fr;
   gap: 20px;
   height: 20px;
+  align-items: center;
 }
 
 form input {
   border-radius: 15px;
   border: solid 2px black;
+  padding-left: 10px;
+  height: 20px;
 }
 
 .container {

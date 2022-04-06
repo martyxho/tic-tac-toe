@@ -1,6 +1,7 @@
 const gameboard = (() => {
   const gameArr = [];
-  return {gameArr};
+  const wipe = () => gameArr.length = 0;
+  return {gameArr, wipe};
 })();
 
 const displayController = (() => {
@@ -10,18 +11,53 @@ const displayController = (() => {
       div.textContent = e;
     });
   };
-  return {renderDisplay};
+  const wipe = () => {
+    const boxes = document.querySelectorAll('.box');
+    boxes.forEach(e => e.textContent = '');
+  }
+  return {renderDisplay, wipe};
 })();
 
 const player = (marker) => {
   const getMarker = () => marker;
-  return {getMarker};
+  function setName(name) { 
+    this.name = name;
+  }
+  function getName() {
+    return this.name;
+  };
+  return {getMarker, getName, setName};
 };
 
 const game = (() => {
   const p1 = player('X');
   const p2 = player('O');
-  let currentPlayer = p1;
+  let currentPlayer;
+  let winner;
+  function startGame() {
+    const p1Name = document.getElementById('p1').value;
+    const p2Name = document.getElementById('p2').value;
+    p1.setName(p1Name);
+    p2.setName(p2Name);
+    currentPlayer = p1;
+    setBoxListeners();
+    const h1 = document.getElementById('message');
+    h1.textContent = `${p1.getName()} vs ${p2.getName()} Game Start`;
+    wipe();
+  }
+  function wipe() {
+    gameboard.wipe();
+    displayController.wipe();
+  }
+  function changePlayer() {
+    if (currentPlayer === p1) {
+      currentPlayer = p2;
+      winner = p1;
+    } else {
+      currentPlayer = p1;
+      winner = p2;
+    }
+  }
   function markBox(e) {
     const i = e.target.id;
     gameboard.gameArr[i] = currentPlayer.getMarker();
@@ -29,8 +65,9 @@ const game = (() => {
     changePlayer();
   }
   function checkGame() {
-    if (checkWin() || checkEnd()) {
-      endGame();
+    const win = checkWin();
+    if (win || checkEnd()) {
+      endGame(win);
     } 
   }
   function checkWin() {
@@ -53,32 +90,30 @@ const game = (() => {
   function checkEnd() {
     return Object.values(gameboard.gameArr).length === 9;
   }
-  function endGame() {
-    const content = document.querySelector('.content');
-    const h1 = document.createElement('h1');
-    h1.textContent = 'Game Over';
-    content.appendChild(h1);
+  function endGame(win) {
+    const h1 = document.getElementById('message');
+    h1.textContent = win ? 
+      `Game Over. ${winner.getName()} wins!`
+      : `Game Over. It's a draw!`;
+    removeBoxListeners();
+  }
+  function setBoxListeners() {
+    for (let i = 0; i < 9; i++) {
+      const div = document.getElementById(i);
+      div.addEventListener('click', markBox, {once : true});
+      div.addEventListener('click', checkGame, {once : true});
+    }
+  };
+  function removeBoxListeners() {
     for (let i = 0; i < 9; i++) {
       const div = document.getElementById(i);
       div.removeEventListener('click', markBox, {once : true});
       div.removeEventListener('click', checkGame, {once : true});
     }
   }
-  function changePlayer() {
-    if (currentPlayer === p1) {
-      currentPlayer = p2;
-    } else {
-      currentPlayer = p1;
-    }
-  }
-  const setBoxListeners = (() => {
-    for (let i = 0; i < 9; i++) {
-      const div = document.getElementById(i);
-      div.addEventListener('click', markBox, {once : true});
-      div.addEventListener('click', checkGame, {once : true});
-    }
+  const setStartListener = (() => {
+    const start = document.getElementById('start');
+    start.addEventListener('click', startGame);
   })();
-  
-  displayController.renderDisplay(gameboard.gameArr);
 })();
 

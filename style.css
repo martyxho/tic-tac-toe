@@ -8,8 +8,43 @@
   display: grid;
   width: 100vw;
   height: 100vh;
+  grid-template-rows: 1fr 2.5fr;
   justify-content: center;
+}
+
+.header {
+  display: grid;
+  justify-items: center;
   align-content: center;
+  grid-template-rows: 100px;
+  padding-top: 30px;
+  gap: 25px;
+}
+
+.header button {
+  height: 30px;
+  width: 100px;
+  border: 2px solid black;
+  border-radius: 15px;
+  background: gold;
+}
+
+form {
+  display: grid;
+  gap: 25px;
+
+}
+
+form div {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 20px;
+  height: 20px;
+}
+
+form input {
+  border-radius: 15px;
+  border: solid 2px black;
 }
 
 .container {
